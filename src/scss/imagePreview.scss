@@ -1,0 +1,42 @@
+#image-preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: none;
+  background-color: #00000055;
+  height: 100vh;
+  place-items: center;
+
+  .image-preview {
+    max-height: 90vh;
+    max-width: 90vw;
+  }
+}
+
+#image-preview-loading-indicator {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  display: grid;
+  place-items: center;
+  user-select: none;
+  pointer-events: none;
+  visibility: hidden;
+
+  img {
+    width: 200px;
+    height: 200px;
+    animation: spin 1s infinite linear;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,3 @@
+lazy
+cache i storage?
+set spinner som global.
