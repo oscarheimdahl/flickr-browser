@@ -19,13 +19,13 @@ const buildImageGallery = (parent) => {
 
   parent.append(imageGalleryContainer);
 
-  appendImagesFromPage(pageToFetch);
+  appendImagesFromPage();
   buildImagePreviewContainer();
 };
 
-const appendImagesFromPage = (page) => {
+const appendImagesFromPage = () => {
   showLoading(true);
-  getPhotoPage(page)
+  getPhotoPage(pageToFetch)
     .then((pageData) => {
       pageData.photos.photo.forEach((photoInfo) => {
         appendThumbnail(photoInfo);
@@ -41,26 +41,43 @@ const appendImagesFromPage = (page) => {
 
 const buildEndlessScrollIndicator = () => {
   const indicatorContainer = document.createElement('div');
-  indicatorContainer.id = 'endless-scroll-indicator-container';
-  const helpText = document.createElement('h4');
-  helpText.id = 'endless-scroll-indicator';
-  helpText.innerText = 'Loading images...';
-  indicatorContainer.appendChild(helpText);
+  indicatorContainer.id = 'load-page-container';
+
+  const loadingText = document.createElement('h4');
+  loadingText.id = 'page-loading-indicator';
+  loadingText.innerText = 'Loading images...';
+  indicatorContainer.appendChild(loadingText);
+
+  const loadMoreButton = buildLoadMoreButton();
+  indicatorContainer.appendChild(loadMoreButton);
+
   return indicatorContainer;
 };
 
+const buildLoadMoreButton = () => {
+  const loadMore = document.createElement('button');
+  loadMore.id = 'load-more-button';
+  loadMore.innerText = 'Load more';
+  loadMore.addEventListener('click', appendImagesFromPage);
+  return loadMore;
+};
+
 const showLoading = (loading) => {
-  let text = loading ? 'Loading images...' : 'Scroll to bottom to load more...';
-  if (loadedAll) text = 'No more images';
-  document.getElementById('endless-scroll-indicator').innerText = text;
+  // let text = loading ? 'Loading images...' : 'Scroll to bottom to load more...';
+  // if (loadedAll) text = 'No more images';
+  document.getElementById('load-more-button').style.display = loading
+    ? 'none'
+    : 'block';
+  document.getElementById('page-loading-indicator').style.display = loading
+    ? 'block'
+    : 'none';
 };
 
 const onGalleryScroll = (e) => {
   const gallery = e.target;
-  console.log(`Here!`);
-  if (gallery.offsetHeight + gallery.scrollTop >= gallery.scrollHeight) {
+  if (gallery.offsetHeight + gallery.scrollTop >= gallery.scrollHeight - 500) {
     if (!canLoad()) return;
-    appendImagesFromPage(pageToFetch);
+    appendImagesFromPage();
   }
 };
 
