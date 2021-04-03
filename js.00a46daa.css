@@ -4,9 +4,11 @@
 }
 #image-gallery-container {
   box-shadow: rgba(100, 100, 111, 0.4) 0px 7px 29px 0px;
-  margin: 2rem auto;
-  height: 80vh;
-  width: 50vw;
+  height: 90vh;
+  width: 90vw;
+  position: relative;
+  top: 5vh;
+  left: 5vw;
   overflow-y: scroll;
 }
 #image-gallery-container #image-gallery {
@@ -49,16 +51,27 @@
   transform: scale(0);
 }
 
-#endless-scroll-indicator-container {
+#load-page-container {
   width: 100%;
-  height: 200px;
+  height: 150px;
   display: flex;
   justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-#endless-scroll-indicator-container h4 {
+#load-page-container h4 {
   font-family: sans-serif;
   color: lightgray;
-  padding-top: 1rem;
+}
+#load-page-container #load-more-button {
+  padding: 10px;
+  background-color: #3372e6;
+  border: solid 1px #3372e6;
+  color: white;
+}
+#load-page-container #load-more-button:hover {
+  cursor: pointer;
 }
 
 @keyframes grow {
