@@ -8204,7 +8204,7 @@ module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
 },{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"js/flickrFetcher.js":[function(require,module,exports) {
 const pageURL = page => {
-  const tag = 'asds'; //'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=78853fd40dda05af7c497ac8940178cd&tags=Dog&page=1&format=json&nojsoncallback=1';
+  const tag = 'Dog'; //'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=78853fd40dda05af7c497ac8940178cd&tags=Dog&page=1&format=json&nojsoncallback=1';
 
   const URL = `
   https://www.flickr.com/services/rest/?
@@ -8326,7 +8326,6 @@ const appendNewImageToPreviewContainer = (previewContainer, image) => {
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
   previewContainer.appendChild(image);
-  console.log(previewContainer.childNodes.length);
   if (previewContainer.childNodes.length > cacheSize) removeFirstChild(previewContainer);
 };
 
@@ -8535,7 +8534,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64465" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52138" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
