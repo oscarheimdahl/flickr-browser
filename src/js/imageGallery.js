@@ -2,8 +2,8 @@ import { getPhotoPage, imageInfoToURL } from './flickrFetcher';
 import { buildImagePreviewContainer, previewImage } from './imagePreview';
 
 let pageToFetch = 1;
-let loadedAll = false;
 let preventLoad = false;
+let lastPreviewedImage = null;
 
 const buildImageGallery = (parent) => {
   const imageGalleryContainer = document.createElement('div');
@@ -24,18 +24,19 @@ const buildImageGallery = (parent) => {
 };
 
 const appendImagesFromPage = () => {
-  showLoading(true);
+  setLoadingMessage('Loading images...');
   getPhotoPage(pageToFetch)
     .then((pageData) => {
       pageData.photos.photo.forEach((photoInfo) => {
         appendThumbnail(photoInfo);
       });
-      showLoading(false);
       pageToFetch++;
-      if (pageToFetch > pageData.photos.pages) loadedAll = true;
+      if (pageToFetch > pageData.photos.pages)
+        setLoadingMessage('No more images');
+      else setLoadingMessage('');
     })
     .catch((e) => {
-      alert(e);
+      setLoadingMessage('Could not load images');
     });
 };
 
@@ -45,32 +46,13 @@ const buildEndlessScrollIndicator = () => {
 
   const loadingText = document.createElement('h4');
   loadingText.id = 'page-loading-indicator';
-  loadingText.innerText = 'Loading images...';
   indicatorContainer.appendChild(loadingText);
-
-  const loadMoreButton = buildLoadMoreButton();
-  indicatorContainer.appendChild(loadMoreButton);
 
   return indicatorContainer;
 };
 
-const buildLoadMoreButton = () => {
-  const loadMore = document.createElement('button');
-  loadMore.id = 'load-more-button';
-  loadMore.innerText = 'Load more';
-  loadMore.addEventListener('click', appendImagesFromPage);
-  return loadMore;
-};
-
-const showLoading = (loading) => {
-  // let text = loading ? 'Loading images...' : 'Scroll to bottom to load more...';
-  // if (loadedAll) text = 'No more images';
-  document.getElementById('load-more-button').style.display = loading
-    ? 'none'
-    : 'block';
-  document.getElementById('page-loading-indicator').style.display = loading
-    ? 'block'
-    : 'none';
+const setLoadingMessage = (message) => {
+  document.getElementById('page-loading-indicator').innerText = message;
 };
 
 const onGalleryScroll = (e) => {
@@ -121,9 +103,10 @@ const buildImage = (photoInfo, size) => {
 };
 
 const onThumbnailClick = (e) => {
+  console.log('here');
   const photoInfo = JSON.parse(e.target.getAttribute('photoInfo'));
   const image = buildPreviewImage(photoInfo);
-  previewImage(image, photoInfo.id);
+  previewImage(image, photoInfo.id, e.target);
 };
 
 const buildThumbnailImage = (photoInfo) => {
