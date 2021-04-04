@@ -81,7 +81,6 @@ const appendNewImageToPreviewContainer = (previewContainer, image) => {
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
   previewContainer.appendChild(image);
-  console.log(previewContainer.childNodes.length);
   if (previewContainer.childNodes.length > cacheSize)
     removeFirstChild(previewContainer);
 };
