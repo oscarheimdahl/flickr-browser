@@ -81,16 +81,17 @@ const appendNewImageToPreviewContainer = (previewContainer, image) => {
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
   previewContainer.appendChild(image);
+  console.log(previewContainer.childNodes.length);
   if (previewContainer.childNodes.length > cacheSize)
     removeFirstChild(previewContainer);
 };
 
-const showCachedImage = (cachedImage) => {
-  cachedImage.style.display = 'block';
-};
-
 const removeFirstChild = (div) => {
   div.removeChild(div.childNodes[0]);
+};
+
+const showCachedImage = (cachedImage) => {
+  cachedImage.style.display = 'block';
 };
 
 const setKeybinds = () => {
@@ -110,15 +111,15 @@ const setKeybinds = () => {
 const showPrevImage = () => {
   const prevThumbnail = lastPreviewedImage.parentElement.previousSibling;
   if (!prevThumbnail) return;
-  const nextImage = prevThumbnail.childNodes[1];
+  const prevImage = prevThumbnail.lastChild;
   hideImagePreview();
-  nextImage.dispatchEvent(new MouseEvent('click'));
+  prevImage.dispatchEvent(new MouseEvent('click'));
 };
 
 const showNextImage = () => {
   const nextThumbnail = lastPreviewedImage.parentElement.nextSibling;
   if (!nextThumbnail) return;
-  const nextImage = nextThumbnail.childNodes[1];
+  const nextImage = nextThumbnail.lastChild;
   hideImagePreview();
   nextImage.dispatchEvent(new MouseEvent('click'));
 };

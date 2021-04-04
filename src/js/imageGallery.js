@@ -3,7 +3,6 @@ import { buildImagePreviewContainer, previewImage } from './imagePreview';
 
 let pageToFetch = 1;
 let preventLoad = false;
-let lastPreviewedImage = null;
 
 const buildImageGallery = (parent) => {
   const imageGalleryContainer = document.createElement('div');
@@ -75,6 +74,9 @@ const appendThumbnail = (photoInfo) => {
   const imageGallery = document.getElementById('image-gallery');
   const thumbnailContainer = buildThumbnailContainer();
   const image = buildThumbnailImage(photoInfo);
+  image.addEventListener('load', () =>
+    thumbnailContainer.childNodes[0].remove()
+  );
   thumbnailContainer.appendChild(image);
   imageGallery.append(thumbnailContainer);
 };
@@ -103,7 +105,6 @@ const buildImage = (photoInfo, size) => {
 };
 
 const onThumbnailClick = (e) => {
-  console.log('here');
   const photoInfo = JSON.parse(e.target.getAttribute('photoInfo'));
   const image = buildPreviewImage(photoInfo);
   previewImage(image, photoInfo.id, e.target);

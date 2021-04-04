@@ -8204,7 +8204,7 @@ module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
 },{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"js/flickrFetcher.js":[function(require,module,exports) {
 const pageURL = page => {
-  const tag = 'Dog'; //'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=78853fd40dda05af7c497ac8940178cd&tags=Dog&page=1&format=json&nojsoncallback=1';
+  const tag = 'asds'; //'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=78853fd40dda05af7c497ac8940178cd&tags=Dog&page=1&format=json&nojsoncallback=1';
 
   const URL = `
   https://www.flickr.com/services/rest/?
@@ -8326,15 +8326,16 @@ const appendNewImageToPreviewContainer = (previewContainer, image) => {
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
   previewContainer.appendChild(image);
+  console.log(previewContainer.childNodes.length);
   if (previewContainer.childNodes.length > cacheSize) removeFirstChild(previewContainer);
-};
-
-const showCachedImage = cachedImage => {
-  cachedImage.style.display = 'block';
 };
 
 const removeFirstChild = div => {
   div.removeChild(div.childNodes[0]);
+};
+
+const showCachedImage = cachedImage => {
+  cachedImage.style.display = 'block';
 };
 
 const setKeybinds = () => {
@@ -8349,15 +8350,15 @@ const setKeybinds = () => {
 const showPrevImage = () => {
   const prevThumbnail = lastPreviewedImage.parentElement.previousSibling;
   if (!prevThumbnail) return;
-  const nextImage = prevThumbnail.childNodes[1];
+  const prevImage = prevThumbnail.lastChild;
   hideImagePreview();
-  nextImage.dispatchEvent(new MouseEvent('click'));
+  prevImage.dispatchEvent(new MouseEvent('click'));
 };
 
 const showNextImage = () => {
   const nextThumbnail = lastPreviewedImage.parentElement.nextSibling;
   if (!nextThumbnail) return;
-  const nextImage = nextThumbnail.childNodes[1];
+  const nextImage = nextThumbnail.lastChild;
   hideImagePreview();
   nextImage.dispatchEvent(new MouseEvent('click'));
 };
@@ -8380,7 +8381,6 @@ var _imagePreview = require("./imagePreview");
 
 let pageToFetch = 1;
 let preventLoad = false;
-let lastPreviewedImage = null;
 
 const buildImageGallery = parent => {
   const imageGalleryContainer = document.createElement('div');
@@ -8443,6 +8443,7 @@ const appendThumbnail = photoInfo => {
   const imageGallery = document.getElementById('image-gallery');
   const thumbnailContainer = buildThumbnailContainer();
   const image = buildThumbnailImage(photoInfo);
+  image.addEventListener('load', () => thumbnailContainer.childNodes[0].remove());
   thumbnailContainer.appendChild(image);
   imageGallery.append(thumbnailContainer);
 };
@@ -8466,7 +8467,6 @@ const buildImage = (photoInfo, size) => {
 };
 
 const onThumbnailClick = e => {
-  console.log('here');
   const photoInfo = JSON.parse(e.target.getAttribute('photoInfo'));
   const image = buildPreviewImage(photoInfo);
   (0, _imagePreview.previewImage)(image, photoInfo.id, e.target);
@@ -8535,7 +8535,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65457" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64465" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
