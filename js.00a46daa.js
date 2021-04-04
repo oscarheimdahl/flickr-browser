@@ -8254,13 +8254,35 @@ var _spinner = _interopRequireDefault(require("../assets/spinner.png"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+let lastPreviewedImage = null;
+
 const buildImagePreviewContainer = () => {
   const loadingIndicator = buildPreviewLoadingIndicator();
   const imagePreviewContainer = document.createElement('div');
   imagePreviewContainer.id = 'image-preview-container';
-  imagePreviewContainer.addEventListener('click', hideImagePreview);
+  imagePreviewContainer.addEventListener('click', e => {
+    if (e.target.id !== 'image-preview-container') return;
+    hideImagePreview();
+  });
+  const previewButtons = buildImagePreviewButton();
   document.body.appendChild(imagePreviewContainer);
   document.body.appendChild(loadingIndicator);
+  document.body.appendChild(previewButtons);
+  setKeybinds();
+};
+
+const buildImagePreviewButton = () => {
+  const buttonRow = document.createElement('div');
+  buttonRow.id = 'image-preview-button-row';
+  const nextButton = document.createElement('button');
+  nextButton.innerText = '>';
+  nextButton.addEventListener('click', showNextImage);
+  const prevButton = document.createElement('button');
+  prevButton.innerText = '<';
+  prevButton.addEventListener('click', showPrevImage);
+  buttonRow.appendChild(prevButton);
+  buttonRow.appendChild(nextButton);
+  return buttonRow;
 };
 
 const buildPreviewLoadingIndicator = () => {
@@ -8277,8 +8299,9 @@ const setLoadingIndicatorVisibility = visibility => {
   document.getElementById('image-preview-loading-indicator').style.visibility = visibility;
 };
 
-const hideImagePreview = e => {
-  if (e.target.id !== 'image-preview-container') return;
+const hideImagePreview = () => {
+  const previewButtons = document.getElementById('image-preview-button-row');
+  previewButtons.style.display = 'none';
   const imagePreview = document.getElementById('image-preview-container');
   imagePreview.style.display = 'none';
   const children = imagePreview.childNodes;
@@ -8288,11 +8311,14 @@ const hideImagePreview = e => {
   }
 };
 
-const previewImage = (image, id) => {
+const previewImage = (image, id, target) => {
+  lastPreviewedImage = target;
   const previewContainer = document.getElementById('image-preview-container');
   const cachedImage = document.getElementById(id);
   if (cachedImage) showCachedImage(cachedImage);else appendNewImageToPreviewContainer(previewContainer, image);
   previewContainer.style.display = 'grid';
+  const previewButtons = document.getElementById('image-preview-button-row');
+  previewButtons.style.display = 'flex';
 };
 
 const appendNewImageToPreviewContainer = (previewContainer, image) => {
@@ -8309,6 +8335,31 @@ const showCachedImage = cachedImage => {
 
 const removeFirstChild = div => {
   div.removeChild(div.childNodes[0]);
+};
+
+const setKeybinds = () => {
+  document.body.onkeydown = e => {
+    if (!lastPreviewedImage || document.getElementById('image-preview-container').style.display === 'none') return;
+    if (e.key === 'Escape') hideImagePreview();
+    if (e.key === 'ArrowLeft') showPrevImage();
+    if (e.key === 'ArrowRight') showNextImage();
+  };
+};
+
+const showPrevImage = () => {
+  const prevThumbnail = lastPreviewedImage.parentElement.previousSibling;
+  if (!prevThumbnail) return;
+  const nextImage = prevThumbnail.childNodes[1];
+  hideImagePreview();
+  nextImage.dispatchEvent(new MouseEvent('click'));
+};
+
+const showNextImage = () => {
+  const nextThumbnail = lastPreviewedImage.parentElement.nextSibling;
+  if (!nextThumbnail) return;
+  const nextImage = nextThumbnail.childNodes[1];
+  hideImagePreview();
+  nextImage.dispatchEvent(new MouseEvent('click'));
 };
 
 module.exports = {
@@ -8328,8 +8379,8 @@ var _flickrFetcher = require("./flickrFetcher");
 var _imagePreview = require("./imagePreview");
 
 let pageToFetch = 1;
-let loadedAll = false;
 let preventLoad = false;
+let lastPreviewedImage = null;
 
 const buildImageGallery = parent => {
   const imageGalleryContainer = document.createElement('div');
@@ -8346,16 +8397,15 @@ const buildImageGallery = parent => {
 };
 
 const appendImagesFromPage = () => {
-  showLoading(true);
+  setLoadingMessage('Loading images...');
   (0, _flickrFetcher.getPhotoPage)(pageToFetch).then(pageData => {
     pageData.photos.photo.forEach(photoInfo => {
       appendThumbnail(photoInfo);
     });
-    showLoading(false);
     pageToFetch++;
-    if (pageToFetch > pageData.photos.pages) loadedAll = true;
+    if (pageToFetch > pageData.photos.pages) setLoadingMessage('No more images');else setLoadingMessage('');
   }).catch(e => {
-    alert(e);
+    setLoadingMessage('Could not load images');
   });
 };
 
@@ -8364,26 +8414,12 @@ const buildEndlessScrollIndicator = () => {
   indicatorContainer.id = 'load-page-container';
   const loadingText = document.createElement('h4');
   loadingText.id = 'page-loading-indicator';
-  loadingText.innerText = 'Loading images...';
   indicatorContainer.appendChild(loadingText);
-  const loadMoreButton = buildLoadMoreButton();
-  indicatorContainer.appendChild(loadMoreButton);
   return indicatorContainer;
 };
 
-const buildLoadMoreButton = () => {
-  const loadMore = document.createElement('button');
-  loadMore.id = 'load-more-button';
-  loadMore.innerText = 'Load more';
-  loadMore.addEventListener('click', appendImagesFromPage);
-  return loadMore;
-};
-
-const showLoading = loading => {
-  // let text = loading ? 'Loading images...' : 'Scroll to bottom to load more...';
-  // if (loadedAll) text = 'No more images';
-  document.getElementById('load-more-button').style.display = loading ? 'none' : 'block';
-  document.getElementById('page-loading-indicator').style.display = loading ? 'block' : 'none';
+const setLoadingMessage = message => {
+  document.getElementById('page-loading-indicator').innerText = message;
 };
 
 const onGalleryScroll = e => {
@@ -8430,9 +8466,10 @@ const buildImage = (photoInfo, size) => {
 };
 
 const onThumbnailClick = e => {
+  console.log('here');
   const photoInfo = JSON.parse(e.target.getAttribute('photoInfo'));
   const image = buildPreviewImage(photoInfo);
-  (0, _imagePreview.previewImage)(image, photoInfo.id);
+  (0, _imagePreview.previewImage)(image, photoInfo.id, e.target);
 };
 
 const buildThumbnailImage = photoInfo => {
@@ -8498,7 +8535,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64480" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65457" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
