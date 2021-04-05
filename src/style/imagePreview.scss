@@ -59,6 +59,18 @@
   }
 }
 
+@media only screen and (max-width: 600px) {
+  #image-preview-container {
+    #image-preview img {
+      padding-bottom: 100px;
+    }
+
+    .preview-button-row {
+      bottom: 100px;
+    }
+  }
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
