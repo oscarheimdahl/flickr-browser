@@ -706,4 +706,4 @@ module.exports="arrow-right.45ff0541.png";
 },{"./flickrFetcher":"iTR2","./imagePreview":"W2iH"}],"QvaY":[function(require,module,exports) {
 "use strict";require("babel-polyfill"),require("../style/index.scss"),require("../style/imageGallery.scss"),require("../style/imagePreview.scss"),require("./flickrFetcher");var e=r(require("./imageGallery"));function r(e){return e&&e.__esModule?e:{default:e}}(0,e.default)(document.body);
 },{"babel-polyfill":"wllv","../style/index.scss":"bjZF","../style/imageGallery.scss":"bjZF","../style/imagePreview.scss":"bjZF","./flickrFetcher":"iTR2","./imageGallery":"xqqx"}]},{},["QvaY"], null)
-//# sourceMappingURL=js.fdb62e99.js.map
+//# sourceMappingURL=js.ea161880.js.map
