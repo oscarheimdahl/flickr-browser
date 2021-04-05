@@ -91,7 +91,7 @@ const buildThumbnailContainer = () => {
 };
 
 const buildImage = (photoInfo, size) => {
-  var img = new Image();
+  const img = new Image();
   img.loading = 'lazy';
   img.alt = `Title: ${photoInfo.title}`;
   img.setAttribute('photoInfo', JSON.stringify(photoInfo));

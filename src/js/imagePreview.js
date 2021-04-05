@@ -1,4 +1,5 @@
 import spinner from '../assets/spinner.png';
+import arrowRight from '../assets/arrow-right.png';
 
 let lastPreviewedImage = null;
 
@@ -8,40 +9,53 @@ const buildImagePreviewContainer = () => {
   const imagePreviewContainer = document.createElement('div');
   imagePreviewContainer.id = 'image-preview-container';
   imagePreviewContainer.addEventListener('click', (e) => {
-    if (e.target.id !== 'image-preview-container') return;
-    hideImagePreview();
+    if (e.target.id === 'image-preview-container') hideImagePreview();
   });
 
-  const previewButtons = buildImagePreviewButton();
+  const imagePreview = document.createElement('div');
+  imagePreview.id = 'image-preview';
+
+  const prevImageButton = buildPrevImageButton();
+  const nextImageButton = buildNextImageButton();
+  const buttonRow = document.createElement('div');
+  buttonRow.className = 'preview-button-row';
+  buttonRow.appendChild(prevImageButton);
+  buttonRow.appendChild(nextImageButton);
+
+  imagePreviewContainer.appendChild(imagePreview);
+  imagePreviewContainer.appendChild(buttonRow);
 
   document.body.appendChild(imagePreviewContainer);
   document.body.appendChild(loadingIndicator);
-  document.body.appendChild(previewButtons);
   setKeybinds();
 };
 
-const buildImagePreviewButton = () => {
-  const buttonRow = document.createElement('div');
-  buttonRow.id = 'image-preview-button-row';
-
+const buildNextImageButton = () => {
   const nextButton = document.createElement('button');
-  nextButton.innerText = '>';
+  nextButton.className = 'preview-button';
+  const img = new Image();
+  img.alt = 'next';
+  img.src = arrowRight;
+  nextButton.appendChild(img);
   nextButton.addEventListener('click', showNextImage);
+  return nextButton;
+};
 
+const buildPrevImageButton = () => {
   const prevButton = document.createElement('button');
-  prevButton.innerText = '<';
+  prevButton.className = 'preview-button';
+  const img = new Image();
+  img.alt = 'previous';
+  img.src = arrowRight;
+  prevButton.appendChild(img);
   prevButton.addEventListener('click', showPrevImage);
-
-  buttonRow.appendChild(prevButton);
-  buttonRow.appendChild(nextButton);
-
-  return buttonRow;
+  return prevButton;
 };
 
 const buildPreviewLoadingIndicator = () => {
   const loadingIndicator = document.createElement('div');
   loadingIndicator.id = 'image-preview-loading-indicator';
-  var img = new Image();
+  const img = new Image();
   img.alt = 'Loading';
   img.src = spinner;
   loadingIndicator.appendChild(img);
@@ -55,13 +69,13 @@ const setLoadingIndicatorVisibility = (visibility) => {
 };
 
 const hideImagePreview = () => {
-  const previewButtons = document.getElementById('image-preview-button-row');
-  previewButtons.style.display = 'none';
+  // const previewButtons = document.getElementById('image-preview-button-row');
+  // previewButtons.style.display = 'none';
   const imagePreview = document.getElementById('image-preview-container');
   imagePreview.style.display = 'none';
-  const children = imagePreview.childNodes;
-  for (var i = 0; i < children.length; i++) {
-    children[i].style.display = 'none';
+  const images = document.getElementById('image-preview').children;
+  for (var i = 0; i < images.length; i++) {
+    images[i].style.display = 'none';
   }
 };
 
@@ -70,19 +84,19 @@ const previewImage = (image, id, target) => {
   const previewContainer = document.getElementById('image-preview-container');
   const cachedImage = document.getElementById(id);
   if (cachedImage) showCachedImage(cachedImage);
-  else appendNewImageToPreviewContainer(previewContainer, image);
-  previewContainer.style.display = 'grid';
-  const previewButtons = document.getElementById('image-preview-button-row');
-  previewButtons.style.display = 'flex';
+  else appendNewImageToPreviewContainer(image);
+  previewContainer.style.display = 'flex';
+  // const previewButtons = document.getElementById('image-preview-button-row');
+  // previewButtons.style.display = 'flex';
 };
 
-const appendNewImageToPreviewContainer = (previewContainer, image) => {
+const appendNewImageToPreviewContainer = (image) => {
+  const images = document.getElementById('image-preview');
   const cacheSize = 50;
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
-  previewContainer.appendChild(image);
-  if (previewContainer.childNodes.length > cacheSize)
-    removeFirstChild(previewContainer);
+  images.appendChild(image);
+  if (images.childNodes.length > cacheSize) removeFirstChild(images);
 };
 
 const removeFirstChild = (div) => {
@@ -95,6 +109,7 @@ const showCachedImage = (cachedImage) => {
 
 const setKeybinds = () => {
   document.body.onkeydown = (e) => {
+    // Only accepts keys if the preview is currently opened
     if (
       !lastPreviewedImage ||
       document.getElementById('image-preview-container').style.display ===
