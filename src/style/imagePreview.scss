@@ -17,13 +17,12 @@
 
   .preview-button-row {
     display: flex;
-    width: 200px;
+    width: 220px;
     justify-content: space-between;
     position: absolute;
     bottom: 30px;
 
     .preview-button {
-      pointer-events: all;
       width: 60px;
       height: 60px;
       padding: 10px;
@@ -34,13 +33,10 @@
         width: 100%;
         height: 100%;
         filter: invert(1);
-        pointer-events: none;
       }
     }
-    .preview-button:first-of-type {
-      img {
-        transform: rotate(180deg);
-      }
+    .preview-button:first-of-type img {
+      transform: rotate(180deg);
     }
   }
 }

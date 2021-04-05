@@ -4,23 +4,16 @@ import arrowRight from '../assets/arrow-right.png';
 let lastPreviewedImage = null;
 
 const buildImagePreviewContainer = () => {
-  const loadingIndicator = buildPreviewLoadingIndicator();
-
   const imagePreviewContainer = document.createElement('div');
   imagePreviewContainer.id = 'image-preview-container';
   imagePreviewContainer.addEventListener('click', (e) => {
     if (e.target.id === 'image-preview-container') hideImagePreview();
   });
 
+  const buttonRow = buildButtonRow();
+  const loadingIndicator = buildPreviewLoadingIndicator();
   const imagePreview = document.createElement('div');
   imagePreview.id = 'image-preview';
-
-  const prevImageButton = buildPrevImageButton();
-  const nextImageButton = buildNextImageButton();
-  const buttonRow = document.createElement('div');
-  buttonRow.className = 'preview-button-row';
-  buttonRow.appendChild(prevImageButton);
-  buttonRow.appendChild(nextImageButton);
 
   imagePreviewContainer.appendChild(imagePreview);
   imagePreviewContainer.appendChild(buttonRow);
@@ -28,6 +21,16 @@ const buildImagePreviewContainer = () => {
   document.body.appendChild(imagePreviewContainer);
   document.body.appendChild(loadingIndicator);
   setKeybinds();
+};
+
+const buildButtonRow = () => {
+  const prevImageButton = buildPrevImageButton();
+  const nextImageButton = buildNextImageButton();
+  const buttonRow = document.createElement('div');
+  buttonRow.className = 'preview-button-row';
+  buttonRow.appendChild(prevImageButton);
+  buttonRow.appendChild(nextImageButton);
+  return buttonRow;
 };
 
 const buildNextImageButton = () => {
@@ -68,9 +71,8 @@ const setLoadingIndicatorVisibility = (visibility) => {
   ).style.visibility = visibility;
 };
 
+// Hides the preview and all cached images, so only one is show at the time.
 const hideImagePreview = () => {
-  // const previewButtons = document.getElementById('image-preview-button-row');
-  // previewButtons.style.display = 'none';
   const imagePreview = document.getElementById('image-preview-container');
   imagePreview.style.display = 'none';
   const images = document.getElementById('image-preview').children;
@@ -83,28 +85,20 @@ const previewImage = (image, id, target) => {
   lastPreviewedImage = target;
   const previewContainer = document.getElementById('image-preview-container');
   const cachedImage = document.getElementById(id);
-  if (cachedImage) showCachedImage(cachedImage);
+  if (cachedImage) cachedImage.style.display = 'block';
   else appendNewImageToPreviewContainer(image);
   previewContainer.style.display = 'flex';
-  // const previewButtons = document.getElementById('image-preview-button-row');
-  // previewButtons.style.display = 'flex';
 };
 
+// Loads the new high res image or shows it if it is cached.
 const appendNewImageToPreviewContainer = (image) => {
   const images = document.getElementById('image-preview');
   const cacheSize = 50;
   setLoadingIndicatorVisibility('visible');
   image.addEventListener('load', () => setLoadingIndicatorVisibility('hidden'));
   images.appendChild(image);
-  if (images.childNodes.length > cacheSize) removeFirstChild(images);
-};
-
-const removeFirstChild = (div) => {
-  div.removeChild(div.childNodes[0]);
-};
-
-const showCachedImage = (cachedImage) => {
-  cachedImage.style.display = 'block';
+  if (images.childNodes.length > cacheSize)
+    images.removeChild(images.childNodes[0]);
 };
 
 const setKeybinds = () => {
